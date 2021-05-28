@@ -9,13 +9,18 @@ def amplify(ipfile, opfile, amplification):
  o.write(header)
 
  
- sample = i.read(2) # Read and write the first sample. There's a bug here. We're not amplifying this sample. Try to fix it. 
- o.write(sample)
+ sample = i.read(2)
+ data = struct.unpack('h', sample)
+ val = data[0]
+ val *= amplification
+ op = struct.pack('h', int(val)) 
+  
+ o.write(op)
 
  while sample: # As long as we read a valid sample, repeat this loop
       sample = i.read(2)  # Read out a sample
-      if sample: # If we read something (once we reach the end of the file, sample will be '' and the if won't execute.
-          # Unpack the sample into a python object that we can use. More details about the struct module is there in the README.
+      if sample: # If we read something (once we reach the end of the file, sample will be '' and the if statement won't execute.
+          # Unpack the sample into a python object that we can use.
           ip_data = struct.unpack('h', sample) 
           val = ip_data[0]
           # Alter the value and convert it into an integer
